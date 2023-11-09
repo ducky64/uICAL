@@ -40,16 +40,20 @@ namespace uICAL {
     }
 
     void DateTime::construct(const string& datetime, const TZMap_ptr& tzmap) {
-        if (datetime.length() < 15)
+        DateStamp ds;
+        if (datetime.length() < 8) {  
             throw ValueError(string("Bad datetime: \"") + datetime + "\"");
-
-        DateStamp ds(datetime.substr(0, 15));
-
-        if (datetime.length() > 15) {
-            this->tz = new_ptr<TZ>(datetime.substr(15), tzmap);
-        }
-        else {
-            this->tz = TZ::unaware();
+        } else if (datetime.length() < 15) {  // 7-char date only
+            ds = DateStamp(datetime.substr(0, 8));
+            this->tz = new_ptr<TZ>("Z", tzmap);  // TODO should probably be in localtime
+        } else {  // 15+-char datetime
+            ds = DateStamp(datetime.substr(0, 15));
+            if (datetime.length() > 15) {
+                this->tz = new_ptr<TZ>(datetime.substr(15), tzmap);
+            }
+            else {
+                this->tz = TZ::unaware();
+            }
         }
 
         this->construct(ds, tz);

@@ -21,18 +21,22 @@ namespace uICAL {
     DateStamp::DateStamp(const string& datestamp) {
         for (;;) {
             try {
-                if (datestamp.length() != 15) {
+                if (datestamp.length() < 8) {
                     break;
                 }
                 this->year = datestamp.substr(0, 4).as_int();
                 this->month = datestamp.substr(4, 2).as_int();
                 this->day = datestamp.substr(6, 2).as_int();
-                if (datestamp.substr(8, 1) != "T") {
-                    break;
+
+                if (datestamp.length() == 15 && datestamp.substr(8, 1) == "T") {
+                    this->hour = datestamp.substr(9, 2).as_int();
+                    this->minute = datestamp.substr(11, 2).as_int();
+                    this->second = datestamp.substr(13, 2).as_int();
+                } else {
+                    this->hour = 0;
+                    this->minute = 0;
+                    this->second = 0;
                 }
-                this->hour = datestamp.substr(9, 2).as_int();
-                this->minute = datestamp.substr(11, 2).as_int();
-                this->second = datestamp.substr(13, 2).as_int();
                 this->validate();
                 return;
             }

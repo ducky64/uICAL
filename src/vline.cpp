@@ -11,16 +11,18 @@
 namespace uICAL {
     VLine::VLine(const string& line) {
         if(line.empty()) {
+            this->name = string::none();
+            this->value = string::none();
             log_error("%s", "VLINE is empty");
-            throw ParseError("VLINE is empty");
         }
 
         size_t colon = line.find(":");
         size_t semicolon = line.find(";");
 
         if (colon == string::npos) {
+            this->name = string::none();
+            this->value = string::none();
             log_error("VLINE does not have a ':' \"%s\"", line.c_str());
-            throw ParseError(string("VLINE does not have a ':' \"") + line + "\"");
         }
 
         if (semicolon != string::npos && semicolon < colon) {
